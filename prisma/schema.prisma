@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ================= CATÁLOGOS =================
+
+model cat_cargo {
+  id_cargo Int @id
+  cargo    String @db.VarChar(70)
+
+  elementos reg_elemento[]
+}
+
+model cat_cuerpo {
+  id_cuerpo Int @id
+  cuerpo    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_estado_civil {
+  id_estado_civil Int @id
+  estado_civil    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_genero {
+  id_genero Int @id
+  genero    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_grado {
+  id_grado Int @id
+  grado    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_grado_estudio {
+  id_grado_estudio Int @id
+  grado_estudio    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_lugar_nacimiento {
+  id_lugar_nacimiento Int @id
+  lugar_nacimiento    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_municipio {
+  id_municipio Int @id
+  municipio    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_ocupacion {
+  id_ocupacion Int @id
+  ocupacion    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_renovacion {
+  id_renovacion Int @id
+  renovacion    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_tipo_sanguineo {
+  id_tipo_sanguineo Int @id
+  tipo_sanguineo    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_zonas {
+  id_zona Int @id
+  zona    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+model cat_subzona {
+  id_subzona Int @id @default(autoincrement())
+  subzona    String @db.VarChar(45)
+
+  elementos reg_elemento[]
+}
+
+
+// ================= PRINCIPAL =================
+
+model reg_elemento {
+  id_elemento         Int      @id @default(autoincrement())
+  fecha_registro      String   @db.VarChar(45)
+  nombre              String   @db.VarChar(45)
+  ape_pat             String?  @db.VarChar(45)
+  ape_mat             String?  @db.VarChar(45)
+  matricula           String?  @db.VarChar(45)
+
+  id_renovacion       Int
+  renovacion          cat_renovacion @relation(fields: [id_renovacion], references: [id_renovacion])
+
+  id_genero           Int
+  genero              cat_genero @relation(fields: [id_genero], references: [id_genero])
+
+  fecha_nacimiento    String   @db.VarChar(45)
+
+  id_lugar_nacimiento Int
+  lugar_nacimiento    cat_lugar_nacimiento @relation(fields: [id_lugar_nacimiento], references: [id_lugar_nacimiento])
+
+  domicilio           String   @db.VarChar(205)
+  codigo_postal       Int?
+  telefono            Float?
+
+  curp                String   @unique(map: "curp_UNIQUE") @db.VarChar(45)
+
+  id_municipio        Int
+  municipio           cat_municipio @relation(fields: [id_municipio], references: [id_municipio])
+
+  id_ocupacion        Int
+  ocupacion           cat_ocupacion @relation(fields: [id_ocupacion], references: [id_ocupacion])
+
+  id_estado_civil     Int
+  estado_civil        cat_estado_civil @relation(fields: [id_estado_civil], references: [id_estado_civil])
+
+  id_grado_estudio    Int
+  grado_estudio       cat_grado_estudio @relation(fields: [id_grado_estudio], references: [id_grado_estudio])
+
+  desc_grado_estudio  String?  @db.VarChar(45)
+  num_ss              String?  @db.VarChar(45)
+
+  id_tipo_sanguineo   Int?
+  tipo_sanguineo      cat_tipo_sanguineo? @relation(fields: [id_tipo_sanguineo], references: [id_tipo_sanguineo])
+
+  referencias_medicas String?  @db.VarChar(45)
+
+  id_zona             Int
+  zona                cat_zonas @relation(fields: [id_zona], references: [id_zona])
+
+  id_subzona          Int
+  subzona             cat_subzona @relation(fields: [id_subzona], references: [id_subzona])
+
+  id_grado            Int
+  grado               cat_grado @relation(fields: [id_grado], references: [id_grado])
+
+  id_cuerpo           Int
+  cuerpo              cat_cuerpo @relation(fields: [id_cuerpo], references: [id_cuerpo])
+
+  id_cargo            Int
+  cargo               cat_cargo @relation(fields: [id_cargo], references: [id_cargo])
+
+  fecha_ingreso       String?  @db.VarChar(45)
+  fecha_jura_bandera  String?  @db.VarChar(45)
+  fecha_jura_guion    String?  @db.VarChar(45)
+  reclutamiento       Int?
+
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  @@index([id_cargo])
+  @@index([id_cuerpo])
+  @@index([id_estado_civil])
+  @@index([id_genero])
+  @@index([id_grado])
+  @@index([id_grado_estudio])
+  @@index([id_lugar_nacimiento])
+  @@index([id_municipio])
+  @@index([id_ocupacion])
+  @@index([id_renovacion])
+  @@index([id_subzona])
+  @@index([id_tipo_sanguineo])
+  @@index([id_zona])
+}
+
+
+// ================= USERS =================
+
+model users {
+  id                Int       @id @default(autoincrement()) @db.UnsignedInt
+  name              String    @db.VarChar(255)
+  email             String    @unique(map: "users_email_unique") @db.VarChar(255)
+  email_verified_at DateTime? @db.Timestamp(0)
+  password          String    @db.VarChar(255)
+  id_lugar          Int?
+  remember_token    String?   @db.VarChar(100)
+  created_at        DateTime? @db.Timestamp(0)
+  updated_at        DateTime? @db.Timestamp(0)
+}
