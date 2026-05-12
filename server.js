@@ -9,9 +9,9 @@ import authRoutes from "./routes/auth.routes.js";
 import membershipRoute from "./routes/membership.route.js";
 
 import configurePassport from "./config/passport.js";
-import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+import prisma from "./lib/prisma.js";
+
 const app = express();
 
 const PORT = process.env.PORT || 8081;
