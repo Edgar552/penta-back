@@ -25,7 +25,7 @@ app.use(cors({
     origin:
         process.env.NODE_ENV === "production"
             ? "https://pdmuslp.com" // dominio FRONTEND
-            : "http://localhost:5173",
+            : "http://localhost:3001",
     credentials: true
 }));
 

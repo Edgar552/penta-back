@@ -1,40 +1,37 @@
-import { getBrowser } from "../lib/puppeteer.js";
 import { buildMembershipHTML } from "./pdfMembershipTemplate.js";
+import html_to_pdf from "html-pdf-node";
 import fs from "fs";
 import path from "path";
 export const generatePDF = async (data) => {
-    const browser = await getBrowser();
+    try {
 
-    const page = await browser.newPage();
+        //PDF logo
+        const logoPath = path.join(process.cwd(), "public/logo.png");
 
-    await page.setRequestInterception(true);
+        const logoBase64 = fs.readFileSync(logoPath, {
+            encoding: "base64"
+        });
 
-    page.on("request", (req) => {
-        if (["image", "font"].includes(req.resourceType())) {
-            return req.abort();
-        }
-        req.continue();
-    });
-//PDF logo
-    const logoPath = path.join(process.cwd(), "public/logo.png");
+        const html = buildMembershipHTML(data,logoBase64);
 
-    const logoBase64 = fs.readFileSync(logoPath, {
-        encoding: "base64"
-    });
+        const file = {
+            content: html
+        };
 
-    const html = buildMembershipHTML(data,logoBase64);
+        const options = {
+            format: "A4",
+            printBackground: true
+        };
 
-    await page.setContent(html, {
-        waitUntil: "domcontentloaded"
-    });
+        const pdfBuffer = await html_to_pdf.generatePdf(
+            file,
+            options
+        );
 
-    const pdf = await page.pdf({
-        format: "Letter",
-        printBackground: true,
-        scale: 0.95
-    });
+        return pdfBuffer;
 
-    await page.close(); // to close the request
-
-    return pdf;
+    } catch (error) {
+        console.error("PDF Error:", error);
+        throw error;
+    }
 };

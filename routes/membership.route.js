@@ -33,20 +33,20 @@ router.get("/pdf/:id",
 //     passport.authenticate("jwt", { session: false }),
 //     showTickets)
 
-router.get(
-    "/attachments/:filename",
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => {
-
-        const filePath = path.join(
-            process.cwd(),
-            "uploads",
-            req.params.filename
-        );
-
-        res.download(filePath);
-    }
-);
+// router.get(
+//     "/attachments/:filename",
+//     passport.authenticate("jwt", { session: false }),
+//     (req, res) => {
+//
+//         const filePath = path.join(
+//             process.cwd(),
+//             "uploads",
+//             req.params.filename
+//         );
+//
+//         res.download(filePath);
+//     }
+// );
 
 router.get("/edit/:id", getMembershipById);
 router.put("/:id", updateMembership);
