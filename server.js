@@ -1,24 +1,20 @@
 // import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-import catalogRoutes from "./routes/catalog.routes.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
-import configurePassport from "./config/passport.js";
+
+import catalogRoutes from "./routes/catalog.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import membershipRoute from "./routes/membership.route.js";
 
+import configurePassport from "./config/passport.js";
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 const app = express();
-const PORT = process.env.PORT || 8081;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const PORT = process.env.PORT || 8081;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,11 +24,16 @@ const __dirname = path.dirname(__filename);
 app.use(cors({
     origin:
         process.env.NODE_ENV === "production"
-            ? "https://back.pdmuslp.com"
+            ? "https://pdmuslp.com" // dominio FRONTEND
             : "http://localhost:5173",
     credentials: true
 }));
 
+/*
+|--------------------------------------------------------------------------
+| Middlewares
+|--------------------------------------------------------------------------
+*/
 app.use(express.json());
 app.use(cookieParser());
 
@@ -49,7 +50,7 @@ async function connectDB() {
         await prisma.$connect();
         console.log("Conectado a MySQL con Prisma");
     } catch (error) {
-        console.error(error);
+        console.error("Error DB:", error);
         process.exit(1);
     }
 }
@@ -63,7 +64,19 @@ app.use("/uploads", express.static("uploads"));
 
 /*
 |--------------------------------------------------------------------------
-| API routes
+| Health check
+|--------------------------------------------------------------------------
+*/
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok",
+        message: "backend running"
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
 |--------------------------------------------------------------------------
 */
 app.use("/auth", authRoutes);
@@ -72,45 +85,33 @@ app.use("/api/catalogs", catalogRoutes);
 
 /*
 |--------------------------------------------------------------------------
-| SOLO producción → servir React build
+| Root route
 |--------------------------------------------------------------------------
 */
-app.get("/health", (req, res) => {
+app.get("/", (req, res) => {
     res.json({
-        status: "ok",
-        message: "backend running"
+        message: "API running"
     });
 });
-if (process.env.NODE_ENV === "production") {
-    app.use(
-        express.static(
-            path.join(__dirname, "../client/dist")
-        )
-    );
-
-    app.get("*", (req, res) => {
-        res.sendFile(
-            path.join(
-                __dirname,
-                "../client/dist/index.html"
-            )
-        );
-    });
-}
 
 /*
 |--------------------------------------------------------------------------
-| Dev fallback
+| 404 fallback API
 |--------------------------------------------------------------------------
 */
-if (process.env.NODE_ENV !== "production") {
-    app.get("/", (req, res) => {
-        res.send("API running...");
+app.use((req, res) => {
+    res.status(404).json({
+        error: "Route not found"
     });
-}
+});
 
+/*
+|--------------------------------------------------------------------------
+| Start server
+|--------------------------------------------------------------------------
+*/
 connectDB().then(() => {
     app.listen(PORT, () => {
-        console.log(`Server running on ${PORT}`);
+        console.log(`Server running on port ${PORT}`);
     });
 });
