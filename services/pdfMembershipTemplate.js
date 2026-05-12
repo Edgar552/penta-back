@@ -1,326 +1,376 @@
-// ================= pdfTemplate.js =================
-export const buildMembershipHTML = (data,logoBase64) => {
-    const fullName = `${data.nombre} ${data.ape_pat} ${data.ape_mat}`;
+import React from "react";
+import {
+    Document,
+    Page,
+    Text,
+    View,
+    StyleSheet,
+    Image
+} from "@react-pdf/renderer";
 
-    return `
-  <html>
-  <head>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        font-size: 12px;
-        color: #1a1a1a;
-        margin: 40px;
-      }
+const styles = StyleSheet.create({
+    page: {
+        padding: 30,
+        fontSize: 10,
+        fontFamily: "Helvetica",
+        color: "#1a1a1a"
+    },
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 10
+    },
+    logo: {
+        width: 70,
+        height: 70
+    },
+    title: {
+        flex: 1,
+        textAlign: "center",
+        fontSize: 14,
+        fontWeight: "bold",
+        color: "#0b1f44"
+    },
+    section: {
+        borderWidth: 1,
+        borderColor: "#e0e0e0",
+        borderLeftWidth: 3,
+        borderLeftColor: "#0b1f44",
+        padding: 10,
+        marginBottom: 12
+    },
+    sectionTitle: {
+        fontSize: 11,
+        fontWeight: "bold",
+        color: "#0b1f44",
+        marginBottom: 8
+    },
+    row: {
+        flexDirection: "row",
+        flexWrap: "wrap"
+    },
+    field: {
+        width: "30%",
+        marginBottom: 8,
+        paddingRight: 10
+    },
+    fullField: {
+        width: "100%",
+        marginBottom: 8
+    },
+    label: {
+        fontWeight: "bold",
+        color: "#555",
+        marginBottom: 3
+    },
+    value: {
+        fontSize: 10
+    },
+    motto: {
+        textAlign: "center",
+        marginTop: 20,
+        fontWeight: "bold",
+        color: "#0b1f44"
+    },
+    signatureContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 40
+    },
+    signatureBlock: {
+        width: "45%",
+        textAlign: "center"
+    },
+    signatureLine: {
+        borderTopWidth: 1,
+        borderTopColor: "#000",
+        marginBottom: 5
+    },
+    footer: {
+        marginTop: 25,
+        fontSize: 8,
+        textAlign: "justify",
+        color: "gray"
+    }
+});
 
-        .header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 15px;
-          margin-bottom: 5px;
-          padding: 10px;
-        }
-        
-        .logo {
-          width: 90px;
-        }
-        
-        .title {
-          font-size: 16px;
-          font-weight: bold;
-          text-align: center;
-          color: #0b1f44;
-        }
+const Field = ({ label, value, full = false }) => {
+    return React.createElement(
+        View,
+        {
+            style: full ? styles.fullField : styles.field
+        },
+        React.createElement(
+            Text,
+            { style: styles.label },
+            label
+        ),
+        React.createElement(
+            Text,
+            { style: styles.value },
+            value || "-"
+        )
+    );
+};
 
-      .section {
-        margin-bottom: 10px;
-        border: 1px solid #e0e0e0;
-        border-left: 3px solid #0b1f44;
-        padding: 10px;
-        border-radius: 6px;
-      }
+export const MembershipPDFTemplate = ({ data, logo }) => {
+    const fullName = `${data.nombre || ""} ${data.ape_pat || ""} ${data.ape_mat || ""}`;
 
-      .section-title {
-        font-weight: bold;
-        color: #0b1f44;
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        font-size: 12px;
-      }
+    return React.createElement(
+        Document,
+        null,
 
-        .grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 12px;
-        }
-        
-        .grid_four {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 12px;
-        }
+        React.createElement(
+            Page,
+            {
+                size: "Letter",
+                style: styles.page
+            },
 
-      .field {
-        width: 100%;
-      }
+            // HEADER
+            React.createElement(
+                View,
+                { style: styles.header },
 
-      .label {
-        font-weight: bold;
-        margin-bottom: 6px;
-        color: #555;
-      }
+                React.createElement(Image, {
+                    src: logo,
+                    style: styles.logo
+                }),
 
-      .value {
-        margin-bottom: 5px;
-      }
+                React.createElement(
+                    Text,
+                    { style: styles.title },
+                    "PENTATHLON DEPORTIVO MILITARIZADO UNIVERSITARIO\nXXIV ZONA SAN LUIS POTOSI"
+                ),
 
-      .full {
-        width: 100%;
-      }
+                React.createElement(Image, {
+                    src: logo,
+                    style: styles.logo
+                })
+            ),
 
-      .signature {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 30px;
-        text-align: center;
-        font-size: 12px;
-      }
+            // SOLICITUD
+            React.createElement(
+                View,
+                { style: styles.section },
 
-      .line {
-        margin-top: 40px;
-        margin-bottom: 5px;
-        border-top: 1px solid #000;
-        width: 280px;
-        margin-left: auto;
-        margin-right: auto;
-      }
+                React.createElement(
+                    Text,
+                    { style: styles.sectionTitle },
+                    `Solicitud de Membresía Nacional ${new Date().getFullYear()}`
+                ),
 
-      .footer {
-        margin-top: 30px;
-        font-size: 10px;
-        color: gray;
-        text-align: justify;
-      }
+                React.createElement(
+                    View,
+                    { style: styles.row },
 
-      .motto {
-        font-size: 12px;
-        text-align: center;
-        margin-top: 20px;
-        font-weight: bold;
-        color: #0b1f44;
-      }
+                    React.createElement(Field, {
+                        label: "Fecha Registro",
+                        value: data.fecha_registro
+                    }),
 
-    </style>
-  </head>
+                    React.createElement(Field, {
+                        label: "Tipo Solicitud",
+                        value: data.renovacion?.renovacion
+                    }),
 
-  <body>
+                    React.createElement(Field, {
+                        label: "Matrícula",
+                        value: data.matricula
+                    }),
 
-    <div class="header">
-    
-         <img class="logo" src="data:image/png;base64,${logoBase64}" />
-               
-         <div class="title">PENTATHLON DEPORTIVO MILITARIZADO UNIVERSITARIO <br>
-            XXIV ZONA SAN LUIS POTOSI
-         </div>
-         
-         <img class="logo" src="data:image/png;base64,${logoBase64}" />
+                    React.createElement(Field, {
+                        label: "Reclutamiento",
+                        value: data.reclutamiento
+                    })
+                )
+            ),
 
-    </div>
+            // PERSONALES
+            React.createElement(
+                View,
+                { style: styles.section },
 
-    <!-- ================= SECCIÓN GENERAL ================= -->
-    <div class="section">
-      <div class="section-title">Solicitud de Membresia Nacional ${new Date().getFullYear()} </div>
-        
-        <div class="field">
-          <div class="label">Fecha de Registro</div>
-          <div class="value">${data.fecha_registro}</div>
-        </div>
-      
-      <div class="grid">
-            
-        <div class="field">
-          <div class="label">Tipo Solicitud</div>
-          <div class="value">${data.renovacion?.renovacion || "-"}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Matrícula</div>
-          <div class="value">${data.matricula || "-"}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Reclutamiento</div>
-          <div class="value">${data.reclutamiento || "-"}</div>
-        </div>
-        
-      </div>
-    </div>
+                React.createElement(
+                    Text,
+                    { style: styles.sectionTitle },
+                    "Datos Personales"
+                ),
 
-    <!-- ================= PERSONALES ================= -->
-    <div class="section">
-      <div class="section-title">Datos Personales</div>
+                React.createElement(
+                    View,
+                    { style: styles.row },
 
-      <div class="grid">
-              
-        <div class="field">
-          <div class="label">Nombre Completo</div>
-          <div class="value">${fullName}</div>
-        </div>
+                    React.createElement(Field, {
+                        label: "Nombre Completo",
+                        value: fullName
+                    }),
 
-        <div class="field">
-          <div class="label">Sexo</div>
-          <div class="value">${data.genero?.genero}</div>
-        </div>
+                    React.createElement(Field, {
+                        label: "Sexo",
+                        value: data.genero?.genero
+                    }),
 
-        <div class="field">
-          <div class="label">Fecha Nacimiento</div>
-          <div class="value">${data.fecha_nacimiento}</div>
-        </div>
+                    React.createElement(Field, {
+                        label: "CURP",
+                        value: data.curp
+                    }),
 
-        <div class="field">
-          <div class="label">CURP</div>
-          <div class="value">${data.curp}</div>
-        </div>
+                    React.createElement(Field, {
+                        label: "Teléfono",
+                        value: data.telefono
+                    }),
 
-        <div class="field">
-          <div class="label">Domicilio</div>
-          <div class="value">${data.domicilio}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">C&oacute;digo Postal</div>
-          <div class="value">${data.codigo_postal}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Municipio</div>
-          <div class="value">${data.municipio?.municipio}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Tel&eacute;fono</div>
-          <div class="value">${data.telefono}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Estado Civil</div>
-          <div class="value">${data.estado_civil?.estado_civil}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Ocupaci&oacute;n</div>
-          <div class="value">${data.ocupacion?.ocupacion}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Grado de Estudios</div>
-          <div class="value">${data.grado_estudio?.grado_estudio}</div>
-        </div>
-        
-      </div>
-    </div>
+                    React.createElement(Field, {
+                        label: "Municipio",
+                        value: data.municipio?.municipio
+                    }),
 
-    <!-- ================= MÉDICOS ================= -->
-    <div class="section">
-      <div class="section-title">Datos Médicos</div>
+                    React.createElement(Field, {
+                        label: "Ocupación",
+                        value: data.ocupacion?.ocupacion
+                    })
+                )
+            ),
 
-      <div class="grid">
+            // MÉDICOS
+            React.createElement(
+                View,
+                { style: styles.section },
 
-        <div class="field">
-          <div class="label">Tipo Sanguíneo</div>
-          <div class="value">${data.tipo_sanguineo?.tipo_sanguineo}</div>
-        </div>
+                React.createElement(
+                    Text,
+                    { style: styles.sectionTitle },
+                    "Datos Médicos"
+                ),
 
-        <div class="field full">
-          <div class="label">Referencias M&eacute;dicas</div>
-          <div class="value">${data.referencias_medicas}</div>
-        </div>
-      </div>
-    </div>
+                React.createElement(
+                    View,
+                    { style: styles.row },
 
-    <!-- ================= INSTITUCIONAL ================= -->
-    <div class="section">
-      <div class="section-title">Datos Institucionales</div>
+                    React.createElement(Field, {
+                        label: "Tipo Sanguíneo",
+                        value: data.tipo_sanguineo?.tipo_sanguineo
+                    }),
 
-      <div class="grid">
-      
-        <div class="field">
-          <div class="label">Fecha de Ingreso</div>
-          <div class="value">${data.fecha_ingreso}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Fecha de Jura de Bandera</div>
-          <div class="value">${data.fecha_jura_bandera || "***"}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Fecha de Jura Gui&oacute;n</div>
-          <div class="value">${data.fecha_jura_guion || "***" }</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Zona</div>
-          <div class="value">${data.zona?.zona}</div>
-        </div>
+                    React.createElement(Field, {
+                        label: "Referencias Médicas",
+                        value: data.referencias_medicas,
+                        full: true
+                    })
+                )
+            ),
 
-        <div class="field">
-          <div class="label">Subzona / Unidad</div>
-          <div class="value">${data.subzona?.subzona}</div>
-        </div>
+            // INSTITUCIONAL
+            React.createElement(
+                View,
+                { style: styles.section },
 
-        <div class="field">
-          <div class="label">Cuerpo</div>
-          <div class="value">${data.cuerpo?.cuerpo}</div>
-        </div>
-        
-        <div class="field">
-          <div class="label">Grado</div>
-          <div class="value">${data.grado?.grado}</div>
-        </div>
+                React.createElement(
+                    Text,
+                    { style: styles.sectionTitle },
+                    "Datos Institucionales"
+                ),
 
+                React.createElement(
+                    View,
+                    { style: styles.row },
 
-        <div class="field">
-          <div class="label">Cargo</div>
-          <div class="value">${data.cargo?.cargo}</div>
-        </div>
-                
-      </div>
-    </div>
-    
-    <div class="motto">
-    <p>ATENTAMENTE</p>
-      "PATRIA, HONOR Y FUERZA"
-    </div>
-    <!-- ================= FIRMA ================= -->
-    <div class="signature">
-        <div>
-          <div class="line"></div>
-            <div><b>${data.grado?.grado}</b></div>
-            <div><b>${fullName}</b></div>
-        </div>
-        
-        <div>
-          <div class="line"></div>
-            <div><b>Comandante de la XXIV Zona San Luis Potosí </b></div>
-            <div><b>1er Comandante de Infantería</b></div>
-            <div><b>Jos&eacute; Antonio Serna Herrejón</b></div>
-        </div>
+                    React.createElement(Field, {
+                        label: "Fecha Ingreso",
+                        value: data.fecha_ingreso
+                    }),
 
-    </div>
+                    React.createElement(Field, {
+                        label: "Zona",
+                        value: data.zona?.zona
+                    }),
 
-    <div class="footer">
-        Cualquier omisión o falsedad en la información que se signa será motivo de sanción o interrupci&oacute;n del tr&aacute;mite conforme al reglamento de afiliación institucional. 
-        En caso de contar con algún grado o cargo dentro del P.D.M.U. la secci&oacute;n de Archivo y Detall del E.M.Z. cotejar&aacute; en expediente, y solicitar&aacute; copia al interesado
-        de ser necesario. El trámite de la membres&iacute;a nacional inicia posterior a la firma de la solicitud, con el aval correspodiente del Comandante de Zona, Sub Zona, Unidad
-        o Jefe de la Sección de Archivo según corresponda, la afiliación al P.D.M.U. es de carácter voluntario. A la firma, el interesado autoriza el uso de su imagen personal
-        en propaganda institucional en los diversos medios digitales oficiales de la XXIV Zona San Luis Potos&iacute;
-    </div>
+                    React.createElement(Field, {
+                        label: "Subzona",
+                        value: data.subzona?.subzona
+                    }),
 
+                    React.createElement(Field, {
+                        label: "Grado",
+                        value: data.grado?.grado
+                    }),
 
+                    React.createElement(Field, {
+                        label: "Cargo",
+                        value: data.cargo?.cargo
+                    })
+                )
+            ),
 
-  </body>
-  </html>
-  `;
+            // MOTTO
+            React.createElement(
+                Text,
+                { style: styles.motto },
+                'ATENTAMENTE\n"PATRIA, HONOR Y FUERZA"'
+            ),
+
+            // FIRMAS
+            React.createElement(
+                View,
+                { style: styles.signatureContainer },
+
+                React.createElement(
+                    View,
+                    { style: styles.signatureBlock },
+
+                    React.createElement(View, {
+                        style: styles.signatureLine
+                    }),
+
+                    React.createElement(
+                        Text,
+                        null,
+                        data.grado?.grado || ""
+                    ),
+
+                    React.createElement(
+                        Text,
+                        null,
+                        fullName
+                    )
+                ),
+
+                React.createElement(
+                    View,
+                    { style: styles.signatureBlock },
+
+                    React.createElement(View, {
+                        style: styles.signatureLine
+                    }),
+
+                    React.createElement(
+                        Text,
+                        null,
+                        "Comandante de la XXIV Zona"
+                    ),
+
+                    React.createElement(
+                        Text,
+                        null,
+                        "1er Comandante de Infantería"
+                    ),
+
+                    React.createElement(
+                        Text,
+                        null,
+                        "José Antonio Serna Herrejón"
+                    )
+                )
+            ),
+
+            // FOOTER
+            React.createElement(
+                Text,
+                { style: styles.footer },
+                "Cualquier omisión o falsedad en la información será motivo de sanción o interrupción del trámite conforme al reglamento institucional."
+            )
+        )
+    );
 };

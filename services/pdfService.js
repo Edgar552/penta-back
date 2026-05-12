@@ -1,34 +1,46 @@
-import { buildMembershipHTML } from "./pdfMembershipTemplate.js";
-import html_to_pdf from "html-pdf-node";
+import { pdf } from "@react-pdf/renderer";
+import React from "react";
 import fs from "fs";
 import path from "path";
+import { MembershipPDFTemplate } from "./pdfMembershipTemplate.js";
+
 export const generatePDF = async (data) => {
     try {
-
-        //PDF logo
+        // logo
         const logoPath = path.join(process.cwd(), "public/logo.png");
 
-        const logoBase64 = fs.readFileSync(logoPath, {
+        const logoBase64 =  "data:image/png;base64,"+fs.readFileSync(logoPath, {
             encoding: "base64"
         });
 
-        const html = buildMembershipHTML(data,logoBase64);
-
-        const file = {
-            content: html
-        };
-
-        const options = {
-            format: "A4",
-            printBackground: true
-        };
-
-        const pdfBuffer = await html_to_pdf.generatePdf(
-            file,
-            options
+        const document = React.createElement(
+            MembershipPDFTemplate,
+            {
+                data,
+                logo: logoBase64
+            }
         );
 
-        return pdfBuffer;
+        const instance = pdf(document);
+
+        // esto devuelve stream
+        const stream = await instance.toBuffer();
+
+        const chunks = [];
+
+        return await new Promise((resolve, reject) => {
+            stream.on("data", (chunk) => {
+                chunks.push(chunk);
+            });
+
+            stream.on("end", () => {
+                resolve(Buffer.concat(chunks));
+            });
+
+            stream.on("error", (err) => {
+                reject(err);
+            });
+        });
 
     } catch (error) {
         console.error("PDF Error:", error);
