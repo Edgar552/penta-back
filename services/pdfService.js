@@ -3,15 +3,10 @@ import React from "react";
 import fs from "fs";
 import path from "path";
 import { MembershipPDFTemplate } from "./pdfMembershipTemplate.js";
+import { logoBase64 } from "./pdfAssets.js";
 
 export const generatePDF = async (data) => {
     try {
-        // logo
-        const logoPath = path.join(process.cwd(), "public/logo.png");
-
-        const logoBase64 =  "data:image/png;base64,"+fs.readFileSync(logoPath, {
-            encoding: "base64"
-        });
 
         const document = React.createElement(
             MembershipPDFTemplate,
@@ -29,17 +24,9 @@ export const generatePDF = async (data) => {
         const chunks = [];
 
         return await new Promise((resolve, reject) => {
-            stream.on("data", (chunk) => {
-                chunks.push(chunk);
-            });
-
-            stream.on("end", () => {
-                resolve(Buffer.concat(chunks));
-            });
-
-            stream.on("error", (err) => {
-                reject(err);
-            });
+            stream.on("data", chunk => chunks.push(chunk));
+            stream.on("end", () => resolve(Buffer.concat(chunks)));
+            stream.on("error", reject);
         });
 
     } catch (error) {
