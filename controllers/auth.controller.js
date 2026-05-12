@@ -17,7 +17,7 @@ const createRefreshToken = user =>
     });
 
 export const login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
 
     const user = await prisma.users.findUnique({
         where: { email }
