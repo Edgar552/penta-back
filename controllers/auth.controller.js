@@ -1,4 +1,4 @@
-import 'dotenv/config';
+//import 'dotenv/config';
 import prisma from "../lib/prisma.js";
 import bcrypt from "bcrypt";
 import { generateTempPassword } from "../utils/tempPsw.js";
