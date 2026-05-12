@@ -162,7 +162,7 @@ export const generateMembershipPDF = async (req, res) => {
         const pdf = await generatePDF(data);
 
         res.setHeader("Content-Type", "application/pdf");
-        res.setHeader("Content-Disposition", "inline");
+        res.setHeader("Content-Disposition", `inline:filename=membership-${id}.pdf`);
         res.send(pdf);
 
     } catch (err) {
