@@ -17,7 +17,10 @@ const createRefreshToken = user =>
     });
 
 export const login = async (req, res) => {
-    const { email, password } = req.body || {};
+    let { email, password } = req.body || {};
+
+    email = email?.trim().toLowerCase();
+    password = password?.trim();
 
     const user = await prisma.users.findUnique({
         where: { email }
@@ -38,7 +41,7 @@ export const login = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "none",
         secure: true,// true in prod
     });
 
