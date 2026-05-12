@@ -11,7 +11,7 @@ import {
 const styles = StyleSheet.create({
     page: {
         padding: 30,
-        fontSize: 10,
+        fontSize: 9,
         fontFamily: "Helvetica",
         color: "#1a1a1a"
     },
@@ -22,37 +22,38 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     logo: {
-        width: 70,
-        height: 70
+        width: "13%",
+       // height: 70
     },
     title: {
         flex: 1,
         textAlign: "center",
-        fontSize: 14,
+        fontSize: 11,
         fontWeight: "bold",
         color: "#0b1f44"
     },
     section: {
+        borderRadius:6,
         borderWidth: 1,
         borderColor: "#e0e0e0",
         borderLeftWidth: 3,
         borderLeftColor: "#0b1f44",
-        padding: 10,
-        marginBottom: 12
+        padding: 5,
+        marginBottom: 5
     },
     sectionTitle: {
-        fontSize: 11,
+        fontSize: 10,
         fontWeight: "bold",
         color: "#0b1f44",
-        marginBottom: 8
+        marginBottom: 6
     },
     row: {
         flexDirection: "row",
         flexWrap: "wrap"
     },
     field: {
-        width: "30%",
-        marginBottom: 8,
+        width: "33%",
+        marginBottom: 10,
         paddingRight: 10
     },
     fullField: {
@@ -62,14 +63,14 @@ const styles = StyleSheet.create({
     label: {
         fontWeight: "bold",
         color: "#555",
-        marginBottom: 3
+        marginBottom: 5
     },
     value: {
-        fontSize: 10
+        fontSize: 9
     },
     motto: {
         textAlign: "center",
-        marginTop: 20,
+        marginTop: 10,
         fontWeight: "bold",
         color: "#0b1f44"
     },
@@ -80,7 +81,9 @@ const styles = StyleSheet.create({
     },
     signatureBlock: {
         width: "45%",
-        textAlign: "center"
+        textAlign: "center",
+        fontWeight: "bold",
+
     },
     signatureLine: {
         borderTopWidth: 1,
@@ -88,7 +91,7 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
     footer: {
-        marginTop: 25,
+        marginTop: 20,
         fontSize: 8,
         textAlign: "justify",
         color: "gray"
@@ -116,6 +119,7 @@ const Field = ({ label, value, full = false }) => {
 
 export const MembershipPDFTemplate = ({ data, logo }) => {
     const fullName = `${data.nombre || ""} ${data.ape_pat || ""} ${data.ape_mat || ""}`;
+    const fullAddress = `${data.domicilio || ""}, ${data.municipio?.municipio || ""}, S.L.P. C.P. ${data.codigo_postal || ""}`;
 
     return React.createElement(
         Document,
@@ -167,7 +171,8 @@ export const MembershipPDFTemplate = ({ data, logo }) => {
 
                     React.createElement(Field, {
                         label: "Fecha Registro",
-                        value: data.fecha_registro
+                        value: data.fecha_registro,
+                        full: true
                     }),
 
                     React.createElement(Field, {
@@ -213,8 +218,30 @@ export const MembershipPDFTemplate = ({ data, logo }) => {
                     }),
 
                     React.createElement(Field, {
+                        label: "Fecha de Nacimiento",
+                        value: data.fecha_nacimiento
+                    }),
+
+                    React.createElement(Field, {
+                        label: "Estado Civil",
+                        value: data.estado_civil?.estado_civil
+                    }),
+
+                    React.createElement(Field, {
+                        label: "Lugar de Nacimiento",
+                        value: data.lugar_nacimiento?.lugar_nacimiento,
+                    }),
+
+                    React.createElement(Field, {
                         label: "CURP",
                         value: data.curp
+                    }),
+
+                    React.createElement(Field, {
+                        label: "Domicilio Completo",
+                        value: fullAddress,
+                        full:true
+
                     }),
 
                     React.createElement(Field, {
@@ -223,8 +250,8 @@ export const MembershipPDFTemplate = ({ data, logo }) => {
                     }),
 
                     React.createElement(Field, {
-                        label: "Municipio",
-                        value: data.municipio?.municipio
+                        label: "Grado de Estudio",
+                        value: data.grado_estudio?.grado_estudio
                     }),
 
                     React.createElement(Field, {
@@ -257,7 +284,7 @@ export const MembershipPDFTemplate = ({ data, logo }) => {
                     React.createElement(Field, {
                         label: "Referencias Médicas",
                         value: data.referencias_medicas,
-                        full: true
+
                     })
                 )
             ),
@@ -283,13 +310,28 @@ export const MembershipPDFTemplate = ({ data, logo }) => {
                     }),
 
                     React.createElement(Field, {
+                        label: "Fecha Jura Bandera",
+                        value: data.fecha_jura_bandera
+                    }),
+
+                    React.createElement(Field, {
+                        label: "Fecha Jura Guion",
+                        value: data.fecha_jura_guion
+                    }),
+
+                    React.createElement(Field, {
                         label: "Zona",
                         value: data.zona?.zona
                     }),
 
                     React.createElement(Field, {
-                        label: "Subzona",
+                        label: "Subzona / Unidad",
                         value: data.subzona?.subzona
+                    }),
+
+                    React.createElement(Field, {
+                        label: "Cuerpo",
+                        value: data.cuerpo?.cuerpo
                     }),
 
                     React.createElement(Field, {
@@ -369,7 +411,11 @@ export const MembershipPDFTemplate = ({ data, logo }) => {
             React.createElement(
                 Text,
                 { style: styles.footer },
-                "Cualquier omisión o falsedad en la información será motivo de sanción o interrupción del trámite conforme al reglamento institucional."
+                "Cualquier omisión o falsedad en la información que se signa será motivo de sanción o interrupción del tramite conforme al reglamento de afiliación institucional." +
+                "En caso de contar con algún grado o cargo dentro del P.D.M.U. la sección de Archivo y Detall del E.M.Z. cotejará; en expediente, y solicitará copia al interesado " +
+                "de ser necesario. El trámite de la membresia nacional inicia posterior a la firma de la solicitud, con el aval correspodiente del Comandante de Zona, Sub Zona, Unidad " +
+                "o Jefe de la Sección de Archivo según corresponda, la afiliación al P.D.M.U. es de carácter voluntario. A la firma, el interesado autoriza el uso de su imagen personal " +
+                "en propaganda institucional en los diversos medios digitales oficiales de la XXIV Zona San Luis Potosi"
             )
         )
     );

@@ -117,7 +117,7 @@ export async function getMemberships(req, res) {
                     }
                 }
             }),
-            prisma.reg_elemento.count({ where }) // 🔥 importante para paginación correcta
+            prisma.reg_elemento.count({ where }) // importante para paginación correcta
         ]);
 
         res.json({
@@ -142,6 +142,7 @@ export const generateMembershipPDF = async (req, res) => {
             include: {
                 renovacion: true,
                 genero: true,
+                lugar_nacimiento:true,
                 municipio: true,
                 estado_civil: true,
                 ocupacion: true,
