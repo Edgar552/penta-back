@@ -28,7 +28,7 @@ const __dirname = path.dirname(__filename);
 app.use(cors({
     origin:
         process.env.NODE_ENV === "production"
-            ? "https://www.pdmuslp.com"
+            ? "https://back.pdmuslp.com"
             : "http://localhost:5173",
     credentials: true
 }));
