@@ -16,18 +16,7 @@ export const generatePDF = async (data) => {
             }
         );
 
-        const instance = pdf(document);
-
-        // esto devuelve stream
-        const stream = await instance.toBuffer();
-
-        const chunks = [];
-
-        return await new Promise((resolve, reject) => {
-            stream.on("data", chunk => chunks.push(chunk));
-            stream.on("end", () => resolve(Buffer.concat(chunks)));
-            stream.on("error", reject);
-        });
+        return await pdf(document).toBuffer();
 
     } catch (error) {
         console.error("PDF Error:", error);
