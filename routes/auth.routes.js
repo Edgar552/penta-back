@@ -32,8 +32,8 @@ router.post("/logout", async (req, res) => {
 
         res.clearCookie("refreshToken", {
             httpOnly: true,
-            sameSite: "strict",
-            secure: false, // true en prod
+            sameSite: "none",
+            secure: true, // true en prod
         });
 
         res.sendStatus(204);

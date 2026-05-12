@@ -21,13 +21,32 @@ const PORT = process.env.PORT || 8081;
 | CORS
 |--------------------------------------------------------------------------
 */
-app.use(cors({
-    origin:
-        process.env.NODE_ENV === "production"
-            ? "https://pdmuslp.com" // dominio FRONTEND
-            : "http://localhost:3001",
-    credentials: true
-}));
+const allowedOrigins =
+    process.env.NODE_ENV === "production"
+        ? [
+            "https://pdmuslp.com",
+            "https://www.pdmuslp.com"
+        ]
+        : [
+            "http://localhost:3001"
+        ];
+
+app.use(
+    cors({
+        origin: function (origin, callback) {
+            if (!origin) return callback(null, true);
+
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
+
+            return callback(
+                new Error("CORS not allowed")
+            );
+        },
+        credentials: true
+    })
+);
 
 /*
 |--------------------------------------------------------------------------
