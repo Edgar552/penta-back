@@ -28,7 +28,7 @@ const allowedOrigins =
             "https://www.pdmuslp.com"
         ]
         : [
-            "http://localhost:3001"
+            "http://localhost:3000"
         ];
 
 app.use(

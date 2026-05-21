@@ -172,13 +172,8 @@ export const MembershipPDFTemplate = ({ data, logo }) => {
                     React.createElement(Field, {
                         label: "Fecha Registro",
                         value: data.fecha_registro,
-                        full: true
                     }),
 
-                    React.createElement(Field, {
-                        label: "Tipo Solicitud",
-                        value: data.renovacion?.renovacion
-                    }),
 
                     React.createElement(Field, {
                         label: "Matrícula",

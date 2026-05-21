@@ -140,7 +140,7 @@ export const generateMembershipPDF = async (req, res) => {
         const data = await prisma.reg_elemento.findUnique({
             where: { id_elemento: Number(id) },
             include: {
-                renovacion: true,
+
                 genero: true,
                 lugar_nacimiento:true,
                 municipio: true,
